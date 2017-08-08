@@ -1,0 +1,32 @@
+language: ruby
+
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode8.1
+      rvm: system
+
+branches:
+  only:
+    - master
+
+install:
+  - unset DYLD_LIBRARY_PATH
+  - export HOMEBREW_DEVELOPER=1
+  - export HOMEBREW_NO_AUTO_UPDATE=1
+  - export HOMEBREW_VERBOSE=1 HOMEBREW_VERBOSE_USING_DOTS=1
+  - brew tap homebrew/science
+  - mkdir -p $(brew --repo)/Library/Taps/dpo
+  - ln -s "$TRAVIS_BUILD_DIR" $(brew --repo)/Library/Taps/dpo/homebrew-openblas
+  - export TRAVIS_BUILD_DIR="$(brew --repo)/Library/Taps/dpo/homebrew-openblas"
+  - chmod 0644 $(brew --repo)/Library/Taps/dpo/homebrew-openblas/*.rb
+  - brew tap --repair
+  - brew update
+  - brew tap-pin dpo/openblas
+
+script:
+  - brew test-bot --tap=dpo/openblas
+
+env:
+  global:
+    secure: "VJbr4zTpw0z8HMDOBv8Uzk/97F6iMdsXYfT4TvyyQrzYCZXtRZhaSVergsUUWff5Lm7roAp1PnTD/JcmcECPFc85Oesz2McLQN7i/dUcFzvqpBpleDMOsDAguu87VVzmnNPd21FykFJUeS3SH9S/2ruDX+mALIZcRCB9WqGQNbVxtgKDrXdBq6wJviGRFrzv2rAPkpRtLkms/I9H/lHlEgw1gXf2yHqlQyOlopNd0g4qZmzUKFuWoUxH3PTlWa3HsbSWPttnW9eEo7U8N5fyfrSXCuKw/KeMOyqFqy1tUg1crw0TmaYQUC/IK/JbZS19vF2AnnwMTFcoZzuOcwK/aDAnclbva5R7I7fakjFhUHRQ+CvU5rcMQSitvjUto3/snzyDKZLZg6UOcIx0C+uCjl2mchp6LLu0os0jZJ6PPHMpm8nmXVQl4OVj5Eloz1FWmYK/KPy88Ke4KTok8Zis2xdeDjYp/Z0gWRNg7Ld9YLRmzx/BN5jcczCFyXXgr8X56aZOwp/IEKTfdlSx1220NMBBRiGPFlSFc1fv0rRojJgteXR6KGeIE7lqgJvnbSt6V7Ym3ix1jqseJeANIoVhY6EjyXXPRCS2ar3sIphwUpfoSr+pyuorNAdwm4Ulnyt5ZHXixftLYj3xRyhM854uOTemD1XDOfSAXEB/+aDHNxs="
