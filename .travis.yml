@@ -1,10 +1,14 @@
 language: ruby
 
+sudo: required
+
 matrix:
   include:
     - os: osx
       osx_image: xcode8.1
       rvm: system
+    - os: linux
+      rvm: 2.0.0
 
 branches:
   only:
@@ -12,6 +16,9 @@ branches:
 
 install:
   - unset DYLD_LIBRARY_PATH
+  - if [ `uname` = "Linux" ]; then bash ci/setup_travis_linux.sh; fi
+  - if [ `uname` = "Linux" ]; then export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"; fi
+  - if [ `uname` = "Linux" ]; then brew install pkg-config; fi
   - export HOMEBREW_DEVELOPER=1
   - export HOMEBREW_NO_AUTO_UPDATE=1
   - export HOMEBREW_VERBOSE=1 HOMEBREW_VERBOSE_USING_DOTS=1
@@ -20,6 +27,7 @@ install:
   - ln -s "$TRAVIS_BUILD_DIR" $(brew --repo)/Library/Taps/dpo/homebrew-openblas
   - export TRAVIS_BUILD_DIR="$(brew --repo)/Library/Taps/dpo/homebrew-openblas"
   - chmod 0644 $(brew --repo)/Library/Taps/dpo/homebrew-openblas/*.rb
+  - umask 022
   - brew tap --repair
   - brew update
   - brew tap-pin dpo/openblas
