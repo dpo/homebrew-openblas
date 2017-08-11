@@ -30,6 +30,7 @@ install:
   - umask 022
   - brew tap --repair
   - brew update
+  - if [ `uname` = "Linux" ]; then brew tap linuxbrew/xorg; fi
   - brew tap-pin dpo/openblas
 
 script:
