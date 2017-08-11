@@ -4,12 +4,6 @@ class Numpy < Formula
   url "https://files.pythonhosted.org/packages/c0/3a/40967d9f5675fbb097ffec170f59c2ba19fc96373e73ad47c2cae9a30aed/numpy-1.13.1.zip"
   sha256 "c9b0283776085cb2804efff73e9955ca279ba4edafd58d3ead70b61d209c4fbb"
 
-  bottle do
-    sha256 "936fecb5154bd0e12d7f136468718e799bd4085b69d2e99bb3358be7e6cd658b" => :sierra
-    sha256 "93f36c7114c91d205dca6f473745ac9d53b15c70cebde6e7fec3f796a9f8d98f" => :el_capitan
-    sha256 "bd5c8a0ba531d9b194c48e16317f8b4f9c4f7f298c5824cd1f7876611acabb3c" => :yosemite
-  end
-
   head do
     url "https://github.com/numpy/numpy.git"
 
