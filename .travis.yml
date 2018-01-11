@@ -8,7 +8,7 @@ matrix:
       osx_image: xcode9.2
       rvm: system
     - os: linux
-      rvm: 2.0.0
+      rvm: 2.3
 
 branches:
   only:
@@ -18,10 +18,11 @@ install:
   - unset DYLD_LIBRARY_PATH
   - if [ `uname` = "Linux" ]; then bash ci/setup_travis_linux.sh; fi
   - if [ `uname` = "Linux" ]; then export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"; fi
-  - if [ `uname` = "Linux" ]; then brew install pkg-config; fi
   - export HOMEBREW_DEVELOPER=1
   - export HOMEBREW_NO_AUTO_UPDATE=1
+  - export HOMEBREW_FORCE_VENDOR_RUBY=1
   - export HOMEBREW_VERBOSE=1 HOMEBREW_VERBOSE_USING_DOTS=1
+  - if [ `uname` = "Linux" ]; then brew update; brew install pkg-config; fi
   - mkdir -p $(brew --repo)/Library/Taps/dpo
   - ln -s "$TRAVIS_BUILD_DIR" $(brew --repo)/Library/Taps/dpo/homebrew-openblas
   - export TRAVIS_BUILD_DIR="$(brew --repo)/Library/Taps/dpo/homebrew-openblas"
