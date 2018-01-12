@@ -31,8 +31,8 @@ class Scotch < Formula
       ldflags += %W[-L#{Formula["xz"].lib} -llzma] if build.with? "xz"
 
       make_args = ["CCS=#{ENV["CC"]}",
-                   "CCP=#{ENV["MPICC"]}",
-                   "CCD=#{ENV["MPICC"]}",
+                   "CCP=mpicc",
+                   "CCD=mpicc",
                    "RANLIB=echo",
                    "CFLAGS=#{cflags.join(" ")}",
                    "LDFLAGS=#{ldflags.join(" ")}"]
