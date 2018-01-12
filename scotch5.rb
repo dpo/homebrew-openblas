@@ -18,8 +18,8 @@ class Scotch5 < Formula
     cd "src" do
       # Use mpicc to compile the parallelized version
       make_args = ["CCS=#{ENV["CC"]}",
-                   "CCP=#{ENV["MPICC"]}",
-                   "CCD=#{ENV["MPICC"]}",
+                   "CCP=mpicc",
+                   "CCD=mpicc",
                    "RANLIB=echo"]
       if OS.mac?
         ln_s "Make.inc/Makefile.inc.i686_mac_darwin8", "Makefile.inc"
