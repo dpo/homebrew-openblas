@@ -1,9 +1,9 @@
 class Mumps < Formula
   desc "Parallel Sparse Direct Solver"
   homepage "http://mumps-solver.org"
-  url "http://mumps.enseeiht.fr/MUMPS_5.1.1.tar.gz"
-  mirror "http://graal.ens-lyon.fr/MUMPS/MUMPS_5.1.1.tar.gz"
-  sha256 "a2a1f89c470f2b66e9982953cbd047d429a002fab9975400cef7190d01084a06"
+  url "http://mumps.enseeiht.fr/MUMPS_5.1.2.tar.gz"
+  mirror "http://graal.ens-lyon.fr/MUMPS/MUMPS_5.1.2.tar.gz"
+  sha256 "eb345cda145da9aea01b851d17e54e7eef08e16bfa148100ac1f7f046cd42ae9"
 
   depends_on "open-mpi" => :recommended
   depends_on "openblas"
