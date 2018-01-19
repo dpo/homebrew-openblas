@@ -3,11 +3,10 @@ class Scalapack < Formula
   homepage "http://www.netlib.org/scalapack/"
   url "http://www.netlib.org/scalapack/scalapack-2.0.2.tgz"
   sha256 "0c74aeae690fe5ee4db7926f49c5d0bb69ce09eea75beb915e00bba07530395c"
-  revision 8
 
   depends_on "cmake" => :build
-  depends_on :fortran
-  depends_on :mpi => [:cc, :f90]
+  depends_on "gcc"
+  depends_on "open-mpi"
   depends_on "openblas"
 
   def install

@@ -4,7 +4,7 @@ class Qrupdate < Formula
   url "https://downloads.sourceforge.net/qrupdate/qrupdate-1.1.2.tar.gz"
   sha256 "e2a1c711dc8ebc418e21195833814cb2f84b878b90a2774365f0166402308e08"
 
-  depends_on :fortran
+  depends_on "gcc"
   depends_on "openblas"
 
   def install

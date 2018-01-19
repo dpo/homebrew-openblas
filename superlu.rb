@@ -10,11 +10,9 @@ class Superlu < Formula
   option "without-test", "skip build-time tests (not recommended)"
   option "with-openmp", "Enable OpenMP multithreading"
 
-  depends_on :fortran
+  depends_on "gcc"
   depends_on "openblas"
   depends_on "tcsh" => :build unless OS.mac?
-
-  needs :openmp if build.with? "openmp"
 
   def install
     ENV.deparallelize
@@ -71,7 +69,7 @@ class Superlu < Formula
   def caveats
     s = ""
     if build.with? "matlab"
-      s += <<-EOS.undent
+      s += <<~EOS
         Matlab interfaces are located in
 
           #{opt_pkgshare}/matlab

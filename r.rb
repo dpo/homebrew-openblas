@@ -12,7 +12,7 @@ class R < Formula
   depends_on "pcre"
   depends_on "readline"
   depends_on "xz"
-  depends_on :fortran
+  depends_on "gcc"
   depends_on :java => :optional
 
   unless OS.mac?
