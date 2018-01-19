@@ -3,17 +3,16 @@ class Scipy < Formula
   homepage "https://www.scipy.org"
   url "https://github.com/scipy/scipy/releases/download/v0.19.1/scipy-0.19.1.tar.xz"
   sha256 "0dca04c4860afdcb066cab4fd520fcffa8c85e9a7b5aa37a445308e899d728b3"
-  revision 1
   head "https://github.com/scipy/scipy.git"
 
   option "without-python", "Build without python2 support"
 
   depends_on "swig" => :build
-  depends_on :fortran
+  depends_on "gcc"
   depends_on "numpy"
   depends_on "openblas"
-  depends_on :python => :recommended if MacOS.version <= :snow_leopard
-  depends_on :python3 => :recommended
+  depends_on "python" => :recommended if MacOS.version <= :snow_leopard
+  depends_on "python3" => :recommended
 
   cxxstdlib_check :skip
 
@@ -22,7 +21,7 @@ class Scipy < Formula
   # fails_with :gcc
 
   def install
-    config = <<-EOS.undent
+    config = <<~EOS
       [DEFAULT]
       library_dirs = #{HOMEBREW_PREFIX}/lib
       include_dirs = #{HOMEBREW_PREFIX}/include
@@ -56,7 +55,7 @@ class Scipy < Formula
     if (build.with? "python") && !Formula["python"].installed?
       homebrew_site_packages = Language::Python.homebrew_site_packages
       user_site_packages = Language::Python.user_site_packages "python"
-      <<-EOS.undent
+      <<~EOS
         If you use system python (that comes - depending on the OS X version -
         with older versions of numpy, scipy and matplotlib), you may need to
         ensure that the brewed packages come earlier in Python's sys.path with:

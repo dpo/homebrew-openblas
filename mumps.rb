@@ -2,16 +2,17 @@ class Mumps < Formula
   desc "Parallel Sparse Direct Solver"
   homepage "http://mumps-solver.org"
   url "http://mumps.enseeiht.fr/MUMPS_5.1.2.tar.gz"
-  mirror "http://graal.ens-lyon.fr/MUMPS/MUMPS_5.1.2.tar.gz"
   sha256 "eb345cda145da9aea01b851d17e54e7eef08e16bfa148100ac1f7f046cd42ae9"
 
-  depends_on "open-mpi" => :recommended
+  option "without-mpi", "build with MPI"
+
+  depends_on "open-mpi" if build.with? "mpi"
   depends_on "openblas"
   depends_on "gcc"
 
-  depends_on "scalapack" if build.with? "open-mpi"
-  depends_on "metis"    => :optional if build.without? "open-mpi"
-  depends_on "parmetis" => :optional if build.with? "open-mpi"
+  depends_on "scalapack" if build.with? "mpi"
+  depends_on "metis"    => :optional if build.without? "mpi"
+  depends_on "parmetis" => :optional if build.with? "mpi"
   depends_on "scotch5"  => :optional
   depends_on "scotch"   => :optional
 
@@ -33,14 +34,14 @@ class Mumps < Formula
     make_args += ["OPTF=-O", "CDEFS=-DAdd_"]
     orderingsf = "-Dpord"
 
-    makefile = (build.with? "open-mpi") ? "Makefile.G95.PAR" : "Makefile.G95.SEQ"
+    makefile = (build.with? "mpi") ? "Makefile.G95.PAR" : "Makefile.G95.SEQ"
     cp "Make.inc/" + makefile, "Makefile.inc"
 
     if build.with? "scotch5"
       make_args += ["SCOTCHDIR=#{Formula["scotch5"].opt_prefix}",
                     "ISCOTCH=-I#{Formula["scotch5"].opt_include}"]
 
-      if build.with? "open-mpi"
+      if build.with? "mpi"
         scotch_libs = "LSCOTCH=-L$(SCOTCHDIR)/lib -lptesmumps -lptscotch -lptscotcherr"
         scotch_libs += " -lptscotchparmetis" if build.with? "parmetis"
         make_args << scotch_libs
@@ -55,7 +56,7 @@ class Mumps < Formula
       make_args += ["SCOTCHDIR=#{Formula["scotch"].opt_prefix}",
                     "ISCOTCH=-I#{Formula["scotch"].opt_include}"]
 
-      if build.with? "open-mpi"
+      if build.with? "mpi"
         scotch_libs = "LSCOTCH=-L$(SCOTCHDIR)/lib -lptscotch -lptscotcherr -lptscotcherrexit -lscotch"
         scotch_libs += "-lptscotchparmetis" if build.with? "parmetis"
         make_args << scotch_libs
@@ -82,7 +83,7 @@ class Mumps < Formula
 
     make_args << "ORDERINGSF=#{orderingsf}"
 
-    if build.with? "open-mpi"
+    if build.with? "mpi"
       make_args += ["CC=#{ENV["MPICC"]} -fPIC",
                     "FC=#{ENV["MPIFC"]} -fPIC",
                     "FL=#{ENV["MPIFC"]} -fPIC",
@@ -102,12 +103,12 @@ class Mumps < Formula
     system "make", "alllib", *(shlibs_args + make_args)
 
     lib.install Dir["lib/*"]
-    lib.install ("libseq/libmpiseq" + (OS.mac? ? ".dylib" : ".so")) if build.without? "open-mpi"
+    lib.install ("libseq/libmpiseq" + (OS.mac? ? ".dylib" : ".so")) if build.without? "mpi"
 
     # Build static libraries (e.g., for Dolfin)
     system "make", "alllib", *make_args
     (libexec/"lib").install Dir["lib/*.a"]
-    (libexec/"lib").install "libseq/libmpiseq.a" if build.without? "open-mpi"
+    (libexec/"lib").install "libseq/libmpiseq.a" if build.without? "mpi"
 
     inreplace "examples/Makefile" do |s|
       s.change_make_var! "libdir", lib
@@ -117,7 +118,7 @@ class Mumps < Formula
     include.install_symlink Dir[libexec/"include/*"]
     # The following .h files may conflict with others related to MPI
     # in /usr/local/include. Do not symlink them.
-    (libexec/"include").install Dir["libseq/*.h"] if build.without? "open-mpi"
+    (libexec/"include").install Dir["libseq/*.h"] if build.without? "mpi"
 
     doc.install Dir["doc/*.pdf"]
     pkgshare.install "examples"
@@ -127,7 +128,7 @@ class Mumps < Formula
       f.puts(make_args.join(" "))  # Record options passed to make.
     end
 
-    if build.with? "open-mpi"
+    if build.with? "mpi"
       resource("mumps_simple").stage do
         simple_args = ["CC=#{ENV["MPICC"]}", "prefix=#{prefix}", "mumps_prefix=#{prefix}",
                        "scalapack_libdir=#{Formula["scalapack"].opt_lib}"]
@@ -148,13 +149,13 @@ class Mumps < Formula
   end
 
   def caveats
-    s = <<-EOS.undent
+    s = <<~EOS
       MUMPS was built with shared libraries. If required,
       static libraries are available in
         #{opt_libexec}/lib
     EOS
-    if build.without? "open-mpi"
-      s += <<-EOS.undent
+    if build.without? "mpi"
+      s += <<~EOS
       You built a sequential MUMPS library.
       Please add #{libexec}/include to the include path
       when building software that depends on MUMPS.
@@ -168,7 +169,7 @@ class Mumps < Formula
     cp_r pkgshare/"examples", testpath
     opts = ["-I#{opt_include}", "-L#{opt_lib}", "-lmumps_common", "-lpord"]
     opts << "-L#{Formula["openblas"].opt_lib}" << "-lopenblas"
-    if Tab.for_name("mumps").with?("open-mpi")
+    if Tab.for_name("mumps").with?("mpi")
       f90 = "mpif90"
       cc = "mpicc"
       mpirun = "mpirun -np 2"
