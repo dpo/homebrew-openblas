@@ -4,9 +4,9 @@ sudo: required
 
 matrix:
   include:
-    - os: osx
-      osx_image: xcode9.2
-      rvm: system
+    # - os: osx
+    #   osx_image: xcode9.2
+    #   rvm: system
     - os: linux
       rvm: 2.3
 
