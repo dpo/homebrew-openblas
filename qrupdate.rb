@@ -12,7 +12,7 @@ class Qrupdate < Formula
     # https://sourceforge.net/p/qrupdate/discussion/905477/thread/d8f9c7e5/
     ENV.deparallelize
 
-    system "make", "lib", "solib", "FC=#{ENV.fc}",
+    system "make", "lib", "solib", "FC=gfortran",
                    "BLAS=-L#{Formula["openblas"].opt_lib} -lopenblas"
 
     # Confuses "make install" on case-insensitive filesystems
@@ -28,8 +28,7 @@ class Qrupdate < Formula
   end
 
   test do
-    ENV.fortran
-    system ENV.fc, "-o", "test", pkgshare/"tch1dn.f", pkgshare/"utils.f",
+    system "gfortran", "-o", "test", pkgshare/"tch1dn.f", pkgshare/"utils.f",
                    "-L#{lib}", "-lqrupdate", "-L#{Formula["openblas"].opt_lib}", "-lopenblas"
     assert_match "PASSED   4     FAILED   0", shell_output("./test")
   end

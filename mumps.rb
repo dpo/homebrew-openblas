@@ -26,7 +26,7 @@ class Mumps < Formula
     if OS.mac?
       # Building dylibs with mpif90 causes segfaults on 10.8 and 10.10. Use gfortran.
       shlibs_args = ["LIBEXT=.dylib",
-                     "AR=#{ENV["FC"]} -dynamiclib -Wl,-install_name -Wl,#{lib}/$(notdir $@) -undefined dynamic_lookup -o "]
+                     "AR=gfortran -dynamiclib -Wl,-install_name -Wl,#{lib}/$(notdir $@) -undefined dynamic_lookup -o "]
     else
       shlibs_args = ["LIBEXT=.so",
                      "AR=$(FL) -shared -Wl,-soname -Wl,$(notdir $@) -o "]
@@ -84,16 +84,16 @@ class Mumps < Formula
     make_args << "ORDERINGSF=#{orderingsf}"
 
     if build.with? "mpi"
-      make_args += ["CC=#{ENV["MPICC"]} -fPIC",
-                    "FC=#{ENV["MPIFC"]} -fPIC",
-                    "FL=#{ENV["MPIFC"]} -fPIC",
+      make_args += ["CC=mpicc -fPIC",
+                    "FC=mpif90 -fPIC",
+                    "FL=mpif90 -fPIC",
                     "SCALAP=-L#{Formula["scalapack"].opt_lib} -lscalapack",
                     "INCPAR=", # Let MPI compilers fill in the blanks.
                     "LIBPAR=$(SCALAP)"]
     else
       make_args += ["CC=#{ENV["CC"]} -fPIC",
-                    "FC=#{ENV["FC"]} -fPIC",
-                    "FL=#{ENV["FC"]} -fPIC"]
+                    "FC=gfortran -fPIC",
+                    "FL=gfortran -fPIC"]
     end
 
     make_args << "LIBBLAS=-L#{Formula["openblas"].opt_lib} -lopenblas"
@@ -130,7 +130,7 @@ class Mumps < Formula
 
     if build.with? "mpi"
       resource("mumps_simple").stage do
-        simple_args = ["CC=#{ENV["MPICC"]}", "prefix=#{prefix}", "mumps_prefix=#{prefix}",
+        simple_args = ["CC=mpicc", "prefix=#{prefix}", "mumps_prefix=#{prefix}",
                        "scalapack_libdir=#{Formula["scalapack"].opt_lib}"]
         if build.with? "scotch5"
           simple_args += ["scotch_libdir=#{Formula["scotch5"].opt_lib}",
@@ -165,7 +165,6 @@ class Mumps < Formula
   end
 
   test do
-    ENV.fortran
     cp_r pkgshare/"examples", testpath
     opts = ["-I#{opt_include}", "-L#{opt_lib}", "-lmumps_common", "-lpord"]
     opts << "-L#{Formula["openblas"].opt_lib}" << "-lopenblas"
