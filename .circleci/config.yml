@@ -29,8 +29,9 @@ jobs:
           echo $repo
           mkdir -p $repo
           cp -a ./ $repo/
-      - run: |
-          brew test-bot --tap=dpo/openblas
+      - run:
+          command: brew test-bot --tap=dpo/openblas
+          no_output_timeout: "30m"
 workflows:
   version: 2
   test-bot:
