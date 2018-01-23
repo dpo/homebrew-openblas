@@ -30,7 +30,7 @@ jobs:
           mkdir -p $repo
           cp -a ./ $repo/
       - run:
-          command: brew test-bot --tap=dpo/openblas
+          command: brew test-bot --skip-setup --tap=dpo/openblas
           no_output_timeout: "30m"
 workflows:
   version: 2
