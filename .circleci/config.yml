@@ -1,5 +1,35 @@
 version: 2
 jobs:
+  build-linux:
+    docker:
+      - image: linuxbrew/linuxbrew
+    environment:
+      CIRCLE_REPOSITORY_URL: https://github.com/dpo/homebrew-openblas
+      HOMEBREW_DEVELOPER: 1
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      HOMEBREW_VERBOSE: 1
+      HOMEBREW_VERBOSE_USING_DOTS: 1
+
+    steps:
+      - run: |
+          brew --env
+          brew config
+      - checkout
+      - run: |
+          git remote set-url origin $CIRCLE_REPOSITORY_URL
+          if [ -e .git/shallow ]; then echo git fetch --unshallow; fi
+          git fetch origin
+          repo=$(brew --repo $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME)
+          echo $repo
+          mkdir -p $repo
+          cp -a ./ $repo/
+          brew install patchelf pkg-config
+          brew tap linuxbrew/xorg
+          brew tap-pin dpo/openblas
+      - run:
+          command: brew test-bot --tap=dpo/openblas
+          no_output_timeout: "30m"
+
   build-macos:
     macos:
       xcode: "9.2.0"
@@ -32,8 +62,10 @@ jobs:
       - run:
           command: brew test-bot --skip-setup --tap=dpo/openblas
           no_output_timeout: "30m"
+
 workflows:
   version: 2
   test-bot:
     jobs:
+      - build-linux
       - build-macos
