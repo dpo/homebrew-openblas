@@ -4,6 +4,7 @@ class Arpack < Formula
   url "https://github.com/opencollab/arpack-ng/archive/3.5.0.tar.gz"
   sha256 "50f7a3e3aec2e08e732a487919262238f8504c3ef927246ec3495617dde81239"
   head "https://github.com/opencollab/arpack-ng.git"
+  revision 1
 
   option "with-mpi", "build with MPI"
 
