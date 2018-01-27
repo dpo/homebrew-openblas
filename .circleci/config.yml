@@ -25,6 +25,7 @@ jobs:
           cp -a ./ $repo/
           brew install patchelf pkg-config
           brew tap linuxbrew/xorg
+          brew install xorg
           brew tap-pin dpo/openblas
       - run:
           command: brew test-bot --tap=dpo/openblas
