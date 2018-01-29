@@ -41,7 +41,7 @@ class Sundials27 < Formula
   test do
     cp Dir[prefix/"examples/nvector/serial/*"], testpath
     system ENV.cc, "-I#{include}", "test_nvector.c", "sundials_nvector.c",
-                   "test_nvector_serial.c", "-L#{lib}", "-lsundials_nvecserial"
+                   "test_nvector_serial.c", "-L#{lib}", "-lsundials_nvecserial", "-lm"
     assert_match "SUCCESS: NVector module passed all tests",
                  shell_output("./a.out 42 0")
   end
