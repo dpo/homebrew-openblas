@@ -4,7 +4,7 @@ class SuiteSparse < Formula
   url "http://faculty.cse.tamu.edu/davis/SuiteSparse/SuiteSparse-4.5.5.tar.gz"
   sha256 "b9a98de0ddafe7659adffad8a58ca3911c1afa8b509355e7aa58b02feb35d9b6"
 
-  depends_on "metis"
+  depends_on "dpo/openblas/metis"
   depends_on "openblas"
 
   def install

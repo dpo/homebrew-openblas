@@ -11,7 +11,7 @@ class Octave < Formula
     depends_on "bison" => :build
     depends_on "icoutils" => :build
     depends_on "librsvg" => :build
-    depends_on "sundials27"
+    depends_on "dpo/openblas/sundials27"
   end
 
   option "with-qt", "Compile with qt-based graphical user interface"

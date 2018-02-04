@@ -10,7 +10,7 @@ class Ipopt < Formula
   depends_on "ampl-mp"
   depends_on "gcc"
   # IPOPT is not able to use parallel MUMPS.
-  depends_on "mumps" => "without-mpi"
+  depends_on "dpo/openblas/mumps" => "without-mpi"
   depends_on "openblas"
   depends_on "pkg-config" => :build
 

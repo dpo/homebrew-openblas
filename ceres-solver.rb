@@ -15,9 +15,9 @@ class CeresSolver < Formula
   depends_on "eigen"
   depends_on "gflags"
   depends_on "glog"
-  depends_on "metis"
+  depends_on "dpo/openblas/metis"
   depends_on "openblas"
-  depends_on "suite-sparse"
+  depends_on "dpo/openblas/suite-sparse"
 
   def install
     so = OS.mac? ? "dylib" : "so"
