@@ -3,6 +3,7 @@ class HwlocAT111 < Formula
   homepage "https://www.open-mpi.org/projects/hwloc/"
   url "https://www.open-mpi.org/software/hwloc/v1.11/downloads/hwloc-1.11.9.tar.bz2"
   sha256 "394333184248d63cb2708a976e57f05337d03bb50c33aa3097ff5c5a74a85164"
+  revision 1
 
   head do
     url "https://github.com/open-mpi/hwloc.git"
@@ -32,6 +33,7 @@ class HwlocAT111 < Formula
                           "--prefix=#{prefix}",
                           "--without-x"
     system "make", "install"
+    prefix.install "hwloc.pc"
 
     pkgshare.install "tests"
   end
