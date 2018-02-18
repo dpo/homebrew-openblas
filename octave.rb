@@ -4,15 +4,24 @@ class Octave < Formula
   url "https://ftp.gnu.org/gnu/octave/octave-4.2.1.tar.gz"
   mirror "https://ftpmirror.gnu.org/octave/octave-4.2.1.tar.gz"
   sha256 "80c28f6398576b50faca0e602defb9598d6f7308b0903724442c2a35a605333b"
-  revision 2
+  revision 1
 
   head do
-    url "https://hg.savannah.gnu.org/hgweb/octave", :branch => "default", :using => :hg
+    url "https://hg.savannah.gnu.org/hgweb/octave", :branch => "default", :using => :hg 
+  end
+  
+  devel do
+    url "https://hg.savannah.gnu.org/hgweb/octave", :revision => "d0221e3675ef", :using => :hg
+    version "4.3" 
+  end
+
+  # Additional dependencies for head and devel 
+  if build.head? or build.devel? 
     depends_on "mercurial" => :build
     depends_on "bison" => :build
     depends_on "icoutils" => :build
     depends_on "librsvg" => :build
-    depends_on "sundials27"
+    depends_on "dpo/openblas/sundials27"
   end
 
   option "with-qt", "Compile with qt-based graphical user interface"
@@ -48,13 +57,12 @@ class Octave < Formula
   depends_on "texinfo" # http://lists.gnu.org/archive/html/octave-maintainers/2018-01/msg00016.html
   depends_on :java => ["1.8+", :optional]
 
+  # Dependencies for the graphical user interface
   if build.with?("qt")
     depends_on "qt"
     depends_on "qscintilla2"
 
-    if build.stable?
-      odie "Option '--with-qt' requires '--HEAD'."
-    else
+    if build.devel?
       # Bug #50025: "Octave window freezes when I quit Octave GUI"
       #  https://savannah.gnu.org/bugs/?50025
       patch do
@@ -67,6 +75,9 @@ class Octave < Formula
         url "https://savannah.gnu.org/bugs/download.php?file_id=43077"
         sha256 "989dc8f6c6e11590153df08c9c1ae2e7372c56cd74cd88aea6b286fe71793b35"
       end
+    else
+      # patches require default branch <= revision d0221e3675ef 
+      odie "Option '--with-qt' requires '--devel'."
     end
   end
 
@@ -83,8 +94,7 @@ class Octave < Formula
         "inline file_stat::~file_stat () { }", "file_stat::~file_stat () { }"
       inreplace "scripts/java/module.mk",
         "-source 1.3 -target 1.3", ""
-      # necessary for java >1.8
-      # allow for recent Oracle Java (>=1.8) without requiring the old Apple Java 1.6
+      # allow for Oracle Java (>=1.8) without requiring the old Apple Java 1.6
       # this is more or less the same as in https://savannah.gnu.org/patch/index.php?9439
       inreplace "libinterp/octave-value/ov-java.cc",
        "#if ! defined (__APPLE__) && ! defined (__MACH__)", "#if 1" # treat mac's java like others
@@ -121,7 +131,7 @@ class Octave < Formula
     args << "--without-qt" if build.without? "qt"
     args << "--disable-java" if build.without? "java"
 
-    system "./bootstrap" if build.head?
+    system "./bootstrap" if not build.stable?
     system "./configure", *args
     system "make", "all"
 
