@@ -72,7 +72,7 @@ class Octave < Formula
       # Fix bug #49053: retina scaling of figures
       # see https://savannah.gnu.org/bugs/?49053
       patch do
-        url "https://savannah.gnu.org/support/download.php?file_id=43077"
+        url "https://savannah.gnu.org/bugs/download.php?file_id=43077"
         sha256 "989dc8f6c6e11590153df08c9c1ae2e7372c56cd74cd88aea6b286fe71793b35"
       end
     else
