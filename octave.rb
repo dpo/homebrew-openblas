@@ -6,17 +6,17 @@ class Octave < Formula
   sha256 "80c28f6398576b50faca0e602defb9598d6f7308b0903724442c2a35a605333b"
   revision 1
 
-  head do
-    url "https://hg.savannah.gnu.org/hgweb/octave", :branch => "default", :using => :hg 
-  end
-  
   devel do
     url "https://hg.savannah.gnu.org/hgweb/octave", :revision => "d0221e3675ef", :using => :hg
-    version "4.3" 
+    version "4.3-d0221e3675ef"
   end
 
-  # Additional dependencies for head and devel 
-  if build.head? or build.devel? 
+  head do
+    url "https://hg.savannah.gnu.org/hgweb/octave", :branch => "default", :using => :hg
+  end
+
+  # Additional dependencies for head and devel
+  if build.head? || build.devel?
     depends_on "mercurial" => :build
     depends_on "bison" => :build
     depends_on "icoutils" => :build
@@ -72,12 +72,12 @@ class Octave < Formula
       # Fix bug #49053: retina scaling of figures
       # see https://savannah.gnu.org/bugs/?49053
       patch do
-        url "https://savannah.gnu.org/bugs/download.php?file_id=43077"
+        url "https://savannah.gnu.org/support/download.php?file_id=43077"
         sha256 "989dc8f6c6e11590153df08c9c1ae2e7372c56cd74cd88aea6b286fe71793b35"
       end
     else
-      # patches require default branch <= revision d0221e3675ef 
-      odie "Option '--with-qt' requires '--devel'."
+      # patches require default branch <= revision d0221e3675ef
+      odie "Option '--with-qt' requires '--DEVEL'."
     end
   end
 
@@ -131,7 +131,7 @@ class Octave < Formula
     args << "--without-qt" if build.without? "qt"
     args << "--disable-java" if build.without? "java"
 
-    system "./bootstrap" if not build.stable?
+    system "./bootstrap" unless build.stable?
     system "./configure", *args
     system "make", "all"
 
