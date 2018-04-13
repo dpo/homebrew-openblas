@@ -11,7 +11,7 @@ class CeresSolver < Formula
     end
   end
 
-  depends_on "cmake" => :run
+  depends_on "cmake"
   depends_on "eigen"
   depends_on "gflags"
   depends_on "glog"

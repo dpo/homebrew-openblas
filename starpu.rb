@@ -16,7 +16,7 @@ class Starpu < Formula
 
   depends_on "gcc" if build.with? "openmp"
   depends_on "dpo/openblas/hwloc@1.11"
-  depends_on "pkg-config" => :run
+  depends_on "pkg-config"
 
   fails_with :clang if build.with? "openmp"
 
