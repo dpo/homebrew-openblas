@@ -77,11 +77,10 @@ class QrMumps < Formula
 
     so = OS.mac? ? "dylib" : "so"
     lib.install Dir["qrm_build/lib/*.a"], Dir["qrm_build/lib/*.#{so}"]
-    include.install Dir["include/*.h"]
-    (libexec/"modules").install Dir["include/*.mod"]
+    include.install Dir["qrm_build/include/*.h"]
+    (libexec/"modules").install Dir["qrm_build/include/*.mod"]
     doc.install Dir["doc/*"]
-    pkgshare.install "src/examples"
-    (pkgshare/"examples").install Dir["aux/*.pl"]
+    pkgshare.install "qrm_build/examples"
     (pkgshare/"testing").install Dir["qrm_build/testing/*"]
 
     prefix.install "makeincs/Make.inc.gnu" # For the record.
