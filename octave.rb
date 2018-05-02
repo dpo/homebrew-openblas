@@ -1,31 +1,31 @@
 class Octave < Formula
   desc "High-level interpreted language for numerical computing"
   homepage "https://www.gnu.org/software/octave/index.html"
-  url "https://ftp.gnu.org/gnu/octave/octave-4.2.1.tar.gz"
-  mirror "https://ftpmirror.gnu.org/octave/octave-4.2.1.tar.gz"
-  sha256 "80c28f6398576b50faca0e602defb9598d6f7308b0903724442c2a35a605333b"
-  revision 1
+  url "ftp://ftp.gnu.org/gnu/octave/octave-4.4.0.tar.lz"
+  sha256 "777542ca425f3e7eddb3b31810563eaf8d690450a4f88c79c273bd338e31a75a"
 
   devel do
-    url "https://hg.savannah.gnu.org/hgweb/octave", :revision => "d0221e3675ef", :using => :hg
-    version "4.3-d0221e3675ef"
+    url "https://hg.savannah.gnu.org/hgweb/octave", :branch => "stable", :using => :hg
+    version "4.4.0+"
   end
 
   head do
     url "https://hg.savannah.gnu.org/hgweb/octave", :branch => "default", :using => :hg
+    version "4.5.0+"
   end
 
   # Additional dependencies for head and devel
   if build.head? || build.devel?
     depends_on "mercurial" => :build
     depends_on "bison" => :build
+    depends_on "doxygen" => :build
     depends_on "icoutils" => :build
     depends_on "librsvg" => :build
-    depends_on "dpo/openblas/sundials27"
   end
 
   option "with-qt", "Compile with qt-based graphical user interface"
-  option "without-test", "Skip compile-time make checks (Not Recommended)"
+  option "with-docs", "Create documentation (requires MacTeX)"
+  option "without-test", "Skip compile-time make checks (not recommended)"
 
   # Complete list of dependencies at https://wiki.octave.org/Building
   depends_on "automake" => :build
@@ -54,6 +54,7 @@ class Octave < Formula
   depends_on "readline"
   depends_on "dpo/openblas/suite-sparse"
   depends_on "openblas"
+  depends_on "dpo/openblas/sundials27"
   depends_on "texinfo" # http://lists.gnu.org/archive/html/octave-maintainers/2018-01/msg00016.html
   depends_on :java => ["1.8+", :optional]
 
@@ -62,48 +63,25 @@ class Octave < Formula
     depends_on "qt"
     depends_on "qscintilla2"
 
-    if build.devel?
-      # Bug #50025: "Octave window freezes when I quit Octave GUI"
-      #  https://savannah.gnu.org/bugs/?50025
-      patch do
-        url "https://savannah.gnu.org/bugs/download.php?file_id=42886"
-        sha256 "6ad49b3a569b40f17273a34fa820b8ed2161b1dedb5396976c41f221f4012b00"
-      end
-      # Fix bug #49053: retina scaling of figures
-      # see https://savannah.gnu.org/bugs/?49053
-      patch do
-        url "https://savannah.gnu.org/bugs/download.php?file_id=43077"
-        sha256 "989dc8f6c6e11590153df08c9c1ae2e7372c56cd74cd88aea6b286fe71793b35"
-      end
-    else
-      # patches require default branch <= revision d0221e3675ef
-      odie "Option '--with-qt' requires '--DEVEL'."
+    # Fix bug #49053: retina scaling of figures
+    # see https://savannah.gnu.org/bugs/?49053
+    patch do
+      url "https://savannah.gnu.org/support/download.php?file_id=44041"
+      sha256 "bf7aaa6ddc7bd7c63da24b48daa76f5bdf8ab3a2f902334da91a8d8140e39ff0"
     end
+
+    # Fix bug #50025: Octave window freezes
+    # see https://savannah.gnu.org/bugs/?50025
+    patch :DATA
+
   end
 
   # Dependencies use Fortran, leading to spurious messages about GCC
   cxxstdlib_check :skip
 
   def install
-    if build.stable?
-      # Remove for > 4.2.1
-      # Remove inline keyword on file_stat destructor which breaks macOS
-      # compilation (bug #50234).
-      # Upstream commit from 24 Feb 2017 https://hg.savannah.gnu.org/hgweb/octave/rev/a6e4157694ef
-      inreplace "liboctave/system/file-stat.cc",
-        "inline file_stat::~file_stat () { }", "file_stat::~file_stat () { }"
-      inreplace "scripts/java/module.mk",
-        "-source 1.3 -target 1.3", ""
-      # allow for Oracle Java (>=1.8) without requiring the old Apple Java 1.6
-      # this is more or less the same as in https://savannah.gnu.org/patch/index.php?9439
-      inreplace "libinterp/octave-value/ov-java.cc",
-       "#if ! defined (__APPLE__) && ! defined (__MACH__)", "#if 1" # treat mac's java like others
-      inreplace "configure.ac",
-       "-framework JavaVM", "" # remove framework JavaVM as it requires Java 1.6 after build
-    else
-      # do not execute a test that may trigger a dialog to install java
-      inreplace "libinterp/octave-value/ov-java.cc", "usejava (\"awt\")", "false ()"
-    end
+    # do not execute a test that may trigger a dialog to install java
+    inreplace "libinterp/octave-value/ov-java.cc", "usejava (\"awt\")", "false ()"
 
     # Default configuration passes all linker flags to mkoctfile, to be
     # inserted into every oct/mex build. This is unnecessary and can cause
@@ -117,7 +95,6 @@ class Octave < Formula
       --enable-link-all-dependencies
       --enable-shared
       --disable-static
-      --disable-docs
       --without-fltk
       --without-OSMesa
       --with-hdf5-includedir=#{Formula["hdf5"].opt_include}
@@ -128,10 +105,29 @@ class Octave < Formula
       --with-sndfile
     ]
 
-    args << "--without-qt" if build.without? "qt"
-    args << "--disable-java" if build.without? "java"
+    if build.without? "java"
+      args << "--disable-java"
+    end
 
-    system "./bootstrap" unless build.stable?
+    if build.without? "qt"
+      args << "--without-qt"
+    else
+      args << "--with-qt=5"
+    end
+
+    if build.without? "docs"
+      args << "--disable-docs"
+    else
+      assert_predicate "/Library/TeX/texbin/latex", :executable?, "--with-docs requires Mactex"
+      ENV.prepend_path "PATH", "/Library/TeX/texbin/"
+    end
+
+    if build.stable?
+      # fix aclocal version issue
+      system "autoreconf", "-f", "-i"
+    else
+      system "./bootstrap"
+    end
     system "./configure", *args
     system "make", "all"
 
@@ -153,6 +149,17 @@ class Octave < Formula
     rcfile.append_lines "makeinfo_program(\"#{Formula["texinfo"].opt_bin}/makeinfo\");"
 
     system "make", "install"
+
+    # create empty qt help to avoid error dialog of GUI
+    # if no documentation is found
+    if build.without?("docs") && build.with?("qt") && !build.stable?
+      File.open("doc/octave_interpreter.qhcp", "w") do |f|
+        f.write("<?xml version=\"1.0\" encoding=\"utf-8\" ?>")
+        f.write("<QHelpCollectionProject version=\"1.0\" />")
+      end
+      system "#{Formula["qt"].opt_bin}/qcollectiongenerator", "doc/octave_interpreter.qhcp", "-o", "doc/octave_interpreter.qhc"
+      (pkgshare/"#{version}/doc").install "doc/octave_interpreter.qhc"
+    end
   end
 
   test do
@@ -163,3 +170,28 @@ class Octave < Formula
     system bin/"octave", "--eval", "try; javaclasspath; catch; quit(1); end;" if build.with? "java"
   end
 end
+
+__END__
+diff --git a/libgui/src/main-window.cc b/libgui/src/main-window.cc
+--- a/libgui/src/main-window.cc
++++ b/libgui/src/main-window.cc
+@@ -221,9 +221,6 @@
+              this, SLOT (handle_octave_ready (void)));
+ 
+     connect (m_interpreter, SIGNAL (octave_finished_signal (int)),
+              this, SLOT (handle_octave_finished (int)));
+-
+-    connect (m_interpreter, SIGNAL (octave_finished_signal (int)),
+-             m_main_thread, SLOT (quit (void)));
+ 
+     connect (m_main_thread, SIGNAL (finished (void)),
+@@ -1536,6 +1533,9 @@
+ 
+   void main_window::handle_octave_finished (int exit_status)
+   {
++    /* fprintf to stderr is needed by macOS */
++    fprintf(stderr, "\n");
++    m_main_thread->quit();
+     qApp->exit (exit_status);
+   }
+ 
