@@ -131,7 +131,12 @@ class Octave < Formula
     args << "--without-qt" if build.without? "qt"
     args << "--disable-java" if build.without? "java"
 
-    system "./bootstrap" unless build.stable?
+    if build.stable?
+      # fix aclocal version issue
+      system "autoreconf", "-f", "-i"
+    else
+      system "./bootstrap"
+    end
     system "./configure", *args
     system "make", "all"
 
