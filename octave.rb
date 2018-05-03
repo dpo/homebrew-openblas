@@ -6,12 +6,10 @@ class Octave < Formula
 
   devel do
     url "https://hg.savannah.gnu.org/hgweb/octave", :branch => "stable", :using => :hg
-    version "4.4.0+"
   end
 
   head do
     url "https://hg.savannah.gnu.org/hgweb/octave", :branch => "default", :using => :hg
-    version "4.5.0+"
   end
 
   # Additional dependencies for head and devel
@@ -42,6 +40,7 @@ class Octave < Formula
   depends_on "gl2ps"
   depends_on "glpk"
   depends_on "gnuplot"
+  depends_on "gnu-tar"
   depends_on "graphicsmagick"
   depends_on "hdf5"
   depends_on "libsndfile"
