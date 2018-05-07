@@ -4,10 +4,6 @@ class Octave < Formula
   url "ftp://ftp.gnu.org/gnu/octave/octave-4.4.0.tar.lz"
   sha256 "777542ca425f3e7eddb3b31810563eaf8d690450a4f88c79c273bd338e31a75a"
 
-  devel do
-    url "https://hg.savannah.gnu.org/hgweb/octave", :branch => "stable", :using => :hg
-  end
-
   head do
     url "https://hg.savannah.gnu.org/hgweb/octave", :branch => "default", :using => :hg
   end
