@@ -4,7 +4,7 @@ class Mumps < Formula
   url "http://mumps.enseeiht.fr/MUMPS_5.1.2.tar.gz"
   sha256 "eb345cda145da9aea01b851d17e54e7eef08e16bfa148100ac1f7f046cd42ae9"
 
-  option "without-mpi", "build with MPI"
+  option "without-mpi", "build without MPI"
 
   depends_on "open-mpi" if build.with? "mpi"
   depends_on "openblas"
