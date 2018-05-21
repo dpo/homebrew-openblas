@@ -9,11 +9,18 @@ class Metis < Formula
   depends_on "cmake" => :build
   depends_on "gcc" if build.with? "openmp"
 
+  fails_with :clang if build.with? "openmp"
+
   def install
-    make_args = ["shared=1", "prefix=#{prefix}"]
-    make_args << "openmp=" + ((build.with? "openmp") ? "0" : "1")
-    system "make", "config", *make_args
-    system "make", "install"
+    cmake_args = std_cmake_args
+    cmake_args << "-DSHARED=ON" << "-DGKLIB_PATH=../GKlib"
+    if build.with? "openmp"
+      cmake_args << "-DOPENMP=ON" << "-DOpenMP_C_FLAGS=-fopenmp" << "-DOpenMP_CXX_FLAGS=-fopenmp" << "-DOpenMP_CXX_LIB_NAMES=gomp"
+    end
+    cd "build" do
+      system "cmake", "..", *cmake_args
+      system "make", "install"
+    end
 
     pkgshare.install "graphs"
     doc.install "manual"
