@@ -21,6 +21,8 @@ class Mumps < Formula
     sha256 "87d1fc87eb04cfa1cba0ca0a18f051b348a93b0b2c2e97279b23994664ee437e"
   end
 
+  fails_with :clang # because we use OpenMP
+
   def install
     make_args = ["RANLIB=echo"]
     if OS.mac?
@@ -92,8 +94,8 @@ class Mumps < Formula
                     "LIBPAR=$(SCALAP)"]
     else
       make_args += ["CC=#{ENV["CC"]} -fPIC",
-                    "FC=gfortran -fPIC",
-                    "FL=gfortran -fPIC"]
+                    "FC=gfortran -fPIC -fopenmp",
+                    "FL=gfortran -fPIC -fopenmp"]
     end
 
     make_args << "LIBBLAS=-L#{Formula["openblas"].opt_lib} -lopenblas"
@@ -166,29 +168,34 @@ class Mumps < Formula
 
   test do
     cp_r pkgshare/"examples", testpath
-    opts = ["-I#{opt_include}", "-L#{opt_lib}", "-lmumps_common", "-lpord"]
-    opts << "-L#{Formula["openblas"].opt_lib}" << "-lopenblas"
+    opts = ["-fopenmp"]
     if Tab.for_name("mumps").with?("mpi")
       f90 = "mpif90"
       cc = "mpicc"
       mpirun = "mpirun -np 2"
-      opts << "-lscalapack"
+      includes = "-I#{opt_include}"
+      opts << "-lscalapack" << "-L#{opt_lib}"
     else
-      f90 = ENV["FC"]
+      f90 = "gfortran"
       cc = ENV["CC"]
       mpirun = ""
+      includes = "-I#{opt_libexec}/include"
+      opts << "-L#{opt_libexec}/lib" << "-lmpiseq"
     end
+    opts << "-lmumps_common" << "-lpord"
+    opts << "-L#{Formula["openblas"].opt_lib}" << "-lopenblas"
+    opts << "-lmetis" if Tab.for_name("mumps").with?("metis")
 
     cd testpath/"examples" do
-      system f90, "-o", "ssimpletest", "ssimpletest.F", "-lsmumps", *opts
+      system f90, "-o", "ssimpletest", "ssimpletest.F", "-lsmumps", includes, *opts
       system "#{mpirun} ./ssimpletest < input_simpletest_real"
-      system f90, "-o", "dsimpletest", "dsimpletest.F", "-ldmumps", *opts
+      system f90, "-o", "dsimpletest", "dsimpletest.F", "-ldmumps", includes, *opts
       system "#{mpirun} ./dsimpletest < input_simpletest_real"
-      system f90, "-o", "csimpletest", "csimpletest.F", "-lcmumps", *opts
+      system f90, "-o", "csimpletest", "csimpletest.F", "-lcmumps", includes, *opts
       system "#{mpirun} ./csimpletest < input_simpletest_cmplx"
-      system f90, "-o", "zsimpletest", "zsimpletest.F", "-lzmumps", *opts
+      system f90, "-o", "zsimpletest", "zsimpletest.F", "-lzmumps", includes, *opts
       system "#{mpirun} ./zsimpletest < input_simpletest_cmplx"
-      system cc, "-c", "c_example.c", "-I#{opt_include}"
+      system cc, "-c", "c_example.c", includes
       system f90, "-o", "c_example", "c_example.o", "-ldmumps", *opts
       system *(mpirun.split + ["./c_example"] + opts)
     end
