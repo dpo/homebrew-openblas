@@ -16,6 +16,7 @@ class Ipopt < Formula
 
   def install
     mumps_libs = %w[-ldmumps -lmumps_common -lpord -lmpiseq]
+    mumps_libs << "-lmetis" if Tab.for_name("mumps").with?("metis")
     mumps_incdir = Formula["mumps"].opt_libexec/"include"
     mumps_libcmd = "-L#{Formula["mumps"].opt_lib} " + mumps_libs.join(" ")
 
