@@ -144,7 +144,6 @@ class Octave < Formula
         opoo "Some tests failed. Details are given in #{opt_prefix}/make-check.log."
       end
       # install test results
-      prefix.install "test/fntests.log"
       prefix.install "test/make-check.log"
     end
 
