@@ -65,6 +65,15 @@ class Octave < Formula
       sha256 "bf7aaa6ddc7bd7c63da24b48daa76f5bdf8ab3a2f902334da91a8d8140e39ff0"
     end
 
+    # add Qt include needed to build against Qt 5.11 (bug #53978)
+    # should be fixed in >4.4.0 
+    if build.stable?
+      patch do
+        url "https://hg.savannah.gnu.org/hgweb/octave/raw-rev/cdaa884568b1"
+        sha256 "223f12fafc755d0084ff237a215766bc646db89c97a9f6e3a3644196b467a1c4"
+      end
+    end
+
     # Fix bug #50025: Octave window freezes
     # see https://savannah.gnu.org/bugs/?50025
     patch :DATA
