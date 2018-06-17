@@ -1,6 +1,6 @@
 class Numpy < Formula
   desc "Package for scientific computing with Python"
-  homepage "http://www.numpy.org"
+  homepage "https://www.numpy.org"
   url "https://files.pythonhosted.org/packages/c0/3a/40967d9f5675fbb097ffec170f59c2ba19fc96373e73ad47c2cae9a30aed/numpy-1.13.1.zip"
   sha256 "c9b0283776085cb2804efff73e9955ca279ba4edafd58d3ead70b61d209c4fbb"
 
@@ -16,8 +16,8 @@ class Numpy < Formula
   option "without-python", "Build without python2 support"
 
   depends_on "gcc" => :build
-  depends_on "python" => :recommended if MacOS.version <= :snow_leopard
-  depends_on "python3" => :recommended
+  depends_on "python@2" => :recommended if MacOS.version <= :snow_leopard
+  depends_on "python" => :recommended
   depends_on "openblas"
 
   resource "nose" do
