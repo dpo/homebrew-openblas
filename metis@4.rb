@@ -1,4 +1,4 @@
-class Metis4 < Formula
+class MetisAT4 < Formula
   desc "Serial graph partitioning and fill-reducing ordering"
   homepage "http://glaros.dtc.umn.edu/gkhome/views/metis"
   url "http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/OLD/metis-4.0.3.tar.gz"

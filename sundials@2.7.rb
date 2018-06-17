@@ -1,4 +1,4 @@
-class Sundials27 < Formula
+class SundialsAT27 < Formula
   desc "Nonlinear and differential/algebraic equations solver"
   homepage "https://computation.llnl.gov/casc/sundials/main.html"
   url "https://computation.llnl.gov/projects/sundials/download/sundials-2.7.0.tar.gz"
