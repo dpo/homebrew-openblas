@@ -13,7 +13,7 @@ class Mumps < Formula
   depends_on "dpo/openblas/scalapack" if build.with? "mpi"
   depends_on "dpo/openblas/metis"    => :optional if build.without? "mpi"
   depends_on "dpo/openblas/parmetis" => :optional if build.with? "mpi"
-  depends_on "dpo/openblas/scotch5"  => :optional
+  depends_on "dpo/openblas/scotch@5"  => :optional
   depends_on "dpo/openblas/scotch"   => :optional
 
   resource "mumps_simple" do
@@ -39,9 +39,9 @@ class Mumps < Formula
     makefile = (build.with? "mpi") ? "Makefile.G95.PAR" : "Makefile.G95.SEQ"
     cp "Make.inc/" + makefile, "Makefile.inc"
 
-    if build.with? "scotch5"
-      make_args += ["SCOTCHDIR=#{Formula["scotch5"].opt_prefix}",
-                    "ISCOTCH=-I#{Formula["scotch5"].opt_include}"]
+    if build.with? "scotch@5"
+      make_args += ["SCOTCHDIR=#{Formula["scotch@5"].opt_prefix}",
+                    "ISCOTCH=-I#{Formula["scotch@5"].opt_include}"]
 
       if build.with? "mpi"
         scotch_libs = "LSCOTCH=-L$(SCOTCHDIR)/lib -lptesmumps -lptscotch -lptscotcherr"
@@ -134,8 +134,8 @@ class Mumps < Formula
       resource("mumps_simple").stage do
         simple_args = ["CC=mpicc", "prefix=#{prefix}", "mumps_prefix=#{prefix}",
                        "scalapack_libdir=#{Formula["scalapack"].opt_lib}"]
-        if build.with? "scotch5"
-          simple_args += ["scotch_libdir=#{Formula["scotch5"].opt_lib}",
+        if build.with? "scotch@5"
+          simple_args += ["scotch_libdir=#{Formula["scotch@5"].opt_lib}",
                           "scotch_libs=-L$(scotch_libdir) -lptesmumps -lptscotch -lptscotcherr"]
         elsif build.with? "scotch"
           simple_args += ["scotch_libdir=#{Formula["scotch"].opt_lib}",

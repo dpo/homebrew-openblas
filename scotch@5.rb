@@ -1,4 +1,4 @@
-class Scotch5 < Formula
+class ScotchAT5 < Formula
   desc "Graph and mesh partitioning, clustering, and sparse matrix ordering"
   homepage "https://gforge.inria.fr/projects/scotch"
   url "https://gforge.inria.fr/frs/download.php/28978"

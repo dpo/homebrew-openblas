@@ -9,7 +9,7 @@ class QrMumps < Formula
   depends_on "gcc"
   depends_on "dpo/openblas/metis" => :recommended
   depends_on "openblas"
-  depends_on "scotch5" => :optional
+  depends_on "scotch@5" => :optional
   depends_on "dpo/openblas/starpu" => :recommended
   depends_on "pkg-config" => :build if build.with? "starpu"
 
@@ -46,11 +46,11 @@ class QrMumps < Formula
       make_args << "LMETIS=-L#{Formula["metis"].opt_lib} -lmetis"
       make_args << "IMETIS=-I#{Formula["metis"].opt_include}"
     end
-    if build.with? "scotch5"
-      libs << "-L#{Formula["scotch5"].opt_lib}" << "-lscotch" << "-lscotcherr"
+    if build.with? "scotch@5"
+      libs << "-L#{Formula["scotch@5"].opt_lib}" << "-lscotch" << "-lscotcherr"
       cfdefs << "-Dhave_scotch"
-      make_args << "LSCOTCH=-L#{Formula["scotch5"].opt_lib} -lscotch -lscotcherr"
-      make_args << "ISCOTCH=-I#{Formula["scotch5"].opt_include}"
+      make_args << "LSCOTCH=-L#{Formula["scotch@5"].opt_lib} -lscotch -lscotcherr"
+      make_args << "ISCOTCH=-I#{Formula["scotch@5"].opt_include}"
     end
     if build.with? "starpu"
       ver = Formula["starpu"].version.to_f # should be 1.2
