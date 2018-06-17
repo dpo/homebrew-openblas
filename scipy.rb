@@ -11,8 +11,8 @@ class Scipy < Formula
   depends_on "gcc"
   depends_on "dpo/openblas/numpy"
   depends_on "openblas"
-  depends_on "python" => :recommended if MacOS.version <= :snow_leopard
-  depends_on "python3" => :recommended
+  depends_on "python@2" => :recommended if MacOS.version <= :snow_leopard
+  depends_on "python" => :recommended
 
   cxxstdlib_check :skip
 
