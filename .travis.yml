@@ -26,7 +26,7 @@ install:
   - mkdir -p $(brew --repo)/Library/Taps/dpo
   - ln -s "$TRAVIS_BUILD_DIR" $(brew --repo)/Library/Taps/dpo/homebrew-openblas
   - export TRAVIS_BUILD_DIR="$(brew --repo)/Library/Taps/dpo/homebrew-openblas"
-  - chmod 0644 $(brew --repo)/Library/Taps/dpo/homebrew-openblas/*.rb
+  - chmod 0644 $(brew --repo)/Library/Taps/dpo/homebrew-openblas/Formula/*.rb
   - umask 022
   - brew tap --repair
   - brew update
