@@ -3,6 +3,7 @@ class Metis4 < Formula
   homepage "http://glaros.dtc.umn.edu/gkhome/views/metis"
   url "http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/OLD/metis-4.0.3.tar.gz"
   sha256 "5efa35de80703c1b2c4d0de080fafbcf4e0d363a21149a1ad2f96e0144841a55"
+  revision 1
 
   keg_only "conflicts with metis (5.x)"
 
@@ -36,9 +37,12 @@ class Metis4 < Formula
     cp pkgshare/"4elt.graph.part.10", testpath
     cp pkgshare/"test.mgraph", testpath
     cp pkgshare/"metis.mesh", testpath
+    if OS.linux?
+      ENV["LD_LIBRARY_PATH"] = opt_lib.to_s
+    end
     system ENV.cc, "-I#{include}", "-c", "io.c"
-    system ENV.cc, "-I#{include}", "mtest.c", "io.o", "-o", "mtest", "-L#{lib}", "-lmetis", "-lm"
-    system "./mtest", "#{pkgshare}/4elt.graph"
+    system ENV.cc, "-I#{include}", "mtest.c", "io.o", "-o", "mtest", "-L#{opt_lib}", "-lmetis", "-lm"
+    system "./mtest", "#{opt_pkgshare}/4elt.graph"
     system "#{bin}/kmetis", "4elt.graph", "10"
     system "#{bin}/onmetis", "4elt.graph"
     system "#{bin}/pmetis", "test.mgraph", "2"
