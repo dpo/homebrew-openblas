@@ -34,6 +34,7 @@ class Ipopt < Formula
             "--with-asl-incdir=#{Formula["ampl-mp"].opt_include}/asl",
             "--with-asl-lib=-L#{Formula["ampl-mp"].opt_lib} -lasl"]
 
+    ENV.append_to_cflags "-fopenmp" # for MUMPS and/or METIS
     system "./configure", *args
     system "make"
     ENV.deparallelize # Needs a serialized install
