@@ -14,6 +14,8 @@ class Ipopt < Formula
   depends_on "openblas"
   depends_on "pkg-config" => :build
 
+  fails_with :clang # because of OpenMP
+
   def install
     mumps_libs = %w[-ldmumps -lmumps_common -lpord -lmpiseq]
     mumps_libs << "-lmetis" if Tab.for_name("mumps").with?("metis")
@@ -35,6 +37,7 @@ class Ipopt < Formula
             "--with-asl-lib=-L#{Formula["ampl-mp"].opt_lib} -lasl"]
 
     ENV.append_to_cflags "-fopenmp" # for MUMPS and/or METIS
+    ENV.append "FFLAGS", "-fopenmp"
     system "./configure", *args
     system "make"
     ENV.deparallelize # Needs a serialized install
