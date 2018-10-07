@@ -172,7 +172,7 @@ class Mumps < Formula
     if Tab.for_name("mumps").with?("mpi")
       f90 = "mpif90"
       cc = "mpicc"
-      mpirun = "mpirun -np 2"
+      mpirun = "mpirun -np 1"
       includes = "-I#{opt_include}"
       opts << "-lscalapack" << "-L#{opt_lib}"
     else
