@@ -3,25 +3,26 @@ class Mumps < Formula
   homepage "http://mumps-solver.org"
   url "http://mumps.enseeiht.fr/MUMPS_5.1.2.tar.gz"
   sha256 "eb345cda145da9aea01b851d17e54e7eef08e16bfa148100ac1f7f046cd42ae9"
+  revision 1
 
   option "without-mpi", "build without MPI"
 
+  depends_on "dpo/openblas/scalapack" if build.with? "mpi"
+  depends_on "gcc"
   depends_on "open-mpi" if build.with? "mpi"
   depends_on "openblas"
-  depends_on "gcc"
 
-  depends_on "dpo/openblas/scalapack" if build.with? "mpi"
-  depends_on "dpo/openblas/metis"    => :optional if build.without? "mpi"
+  depends_on "dpo/openblas/metis" => :optional if build.without? "mpi"
   depends_on "dpo/openblas/parmetis" => :optional if build.with? "mpi"
-  depends_on "dpo/openblas/scotch@5"  => :optional
-  depends_on "dpo/openblas/scotch"   => :optional
+  depends_on "dpo/openblas/scotch" => :optional
+  depends_on "dpo/openblas/scotch@5" => :optional
+
+  fails_with :clang # because we use OpenMP
 
   resource "mumps_simple" do
     url "https://github.com/dpo/mumps_simple/archive/v0.4.tar.gz"
     sha256 "87d1fc87eb04cfa1cba0ca0a18f051b348a93b0b2c2e97279b23994664ee437e"
   end
-
-  fails_with :clang # because we use OpenMP
 
   def install
     make_args = ["RANLIB=echo"]
@@ -158,9 +159,9 @@ class Mumps < Formula
     EOS
     if build.without? "mpi"
       s += <<~EOS
-      You built a sequential MUMPS library.
-      Please add #{libexec}/include to the include path
-      when building software that depends on MUMPS.
+        You built a sequential MUMPS library.
+        Please add #{libexec}/include to the include path
+        when building software that depends on MUMPS.
       EOS
     end
     s
